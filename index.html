@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Controle de LED - ESP32</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #10131c;
+            color: white;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: #1b2030;
+            padding: 40px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 8px 30px #00000050;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 12px;
+            color: #60a5fa;
+        }
+
+        p {
+            color: #b8c0d4;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .status {
+            background: #252c3e;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .status h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        #estado {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f87171;
+        }
+
+        .botoes {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            border: none;
+            padding: 15px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+            opacity: 0.9;
+        }
+
+        .ligar {
+            background: #22c55e;
+            color: white;
+        }
+
+        .desligar {
+            background: #ef4444;
+            color: white;
+        }
+
+        #mensagem {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <h1>Controle de LED</h1>
+
+        <p>
+            Projeto de Internet das Coisas (IoT).
+            Controle um LED conectado ao ESP32
+            através de uma página Web e Wi-Fi.
+        </p>
+
+        <section class="status">
+
+            <h2>Estado atual do LED</h2>
+
+            <span id="estado">LED DESLIGADO</span>
+
+        </section>
+
+        <section class="botoes">
+
+            <button class="ligar" onclick="controlarLED('ligar')">
+                LIGAR LED
+            </button>
+
+            <button class="desligar" onclick="controlarLED('desligar')">
+                DESLIGAR LED
+            </button>
+
+        </section>
+
+        <div id="mensagem">
+            Aguardando comando...
+        </div>
+
+    </main>
+
+    <script>
+
+        async function controlarLED(acao) {
+
+            const estado = document.getElementById("estado");
+            const mensagem = document.getElementById("mensagem");
+
+            mensagem.textContent = "Enviando comando...";
+
+            try {
+
+                // Envia uma solicitação HTTP ao ESP32
+                const resposta = await fetch("/" + acao);
+
+                if (!resposta.ok) {
+                    throw new Error("Erro na comunicação");
+                }
+
+                if (acao === "ligar") {
+
+                    estado.textContent = "LED LIGADO";
+                    estado.style.color = "#22c55e";
+
+                } else {
+
+                    estado.textContent = "LED DESLIGADO";
+                    estado.style.color = "#f87171";
+
+                }
+
+                mensagem.textContent = "Comando enviado com sucesso!";
+
+            } catch (erro) {
+
+                mensagem.textContent =
+                    "Não foi possível comunicar com o ESP32.";
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>
